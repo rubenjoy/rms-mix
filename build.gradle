@@ -1,0 +1,45 @@
+buildscript {
+
+	ext.docker_version = "3.0.12"
+	ext.docker_compose_version = "0.4.5"
+
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath "com.bmuschko:gradle-docker-plugin:$docker_version"
+		classpath "com.avast.gradle:docker-compose-gradle-plugin:$docker_compose_version"
+	}
+}
+
+apply plugin: 'com.bmuschko.docker-remote-api'
+apply plugin: 'docker-compose'
+
+import com.bmuschko.gradle.docker.tasks.DockerInfo
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerListImages
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+
+task buildImage(type: DockerBuildImage) {
+	dockerFile = project.file('hello-world/Dockerfile')
+	inputDir = project.file('hello-world/')
+	tag = 'rubenj/hello-world'
+}
+
+task dockerInfo(type: DockerInfo) {}
+
+task createContainer(type: DockerCreateContainer) {
+	dependsOn buildImage
+	targetImageId { buildImage.getImageId() }
+	portBindings = ['8080:8080']
+}
+
+task startContainer(type: DockerStartContainer) {
+	dependsOn createContainer
+	targetContainerId { createContainer.getContainerId() }
+}
+
+println "hello"
