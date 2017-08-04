@@ -17,16 +17,15 @@ apply plugin: 'com.bmuschko.docker-remote-api'
 apply plugin: 'docker-compose'
 
 import com.bmuschko.gradle.docker.tasks.DockerInfo
-import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.image.DockerListImages
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
 
+// TODO dependsOn task build project dulu..
 task buildImage(type: DockerBuildImage) {
-	dockerFile = project.file('hello-world/Dockerfile')
-	inputDir = project.file('hello-world/')
-	tag = 'rubenj/hello-world'
+	dockerFile = project.file("$projectName/Dockerfile")
+	inputDir = project.file("$projectName/")
+	tag = "rubenj/$projectName"
 }
 
 task dockerInfo(type: DockerInfo) {}
@@ -41,5 +40,3 @@ task startContainer(type: DockerStartContainer) {
 	dependsOn createContainer
 	targetContainerId { createContainer.getContainerId() }
 }
-
-println "hello"

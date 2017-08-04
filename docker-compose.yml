@@ -4,5 +4,9 @@ services:
     image: 'rubenj/hello-world'
     ports: 
       - "8080:8080"
+  rms-employee:
+    image: 'rubenj/rms-employee'
+    ports:
+      - "7081:8080"
 networks:
   default:
